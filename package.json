@@ -1,0 +1,29 @@
+{
+  "name": "@srcld/dataservice-extjs",
+  "version": "1.0.0",
+  "description": "ExtJS Module for Virtimo BPC",
+  "main": "build.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/srcld/dataservice-extjs.git"
+  },
+  "author": "Sourcloud",
+  "license": "ASK_AUTHOR",
+  "bugs": {
+    "url": "https://github.com/srcld/dataservice-extjs/issues"
+  },
+  "homepage": "https://github.com/srcld/dataservice-extjs#readme",
+  "dependencies": {
+    "@srcld/bpc-sdk-unofficial": "^0.0.15"
+  },
+  "bpcCompat": {
+    "name": "dataservice",
+    "applicationName": "SRCLD - Services",
+    "bpcVersion": "1.0.0",
+    "bpcPropertiesFile": ""
+  }
+}
