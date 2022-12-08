@@ -1,7 +1,7 @@
 {
   "name": "@srcld/dataservice-extjs",
   "version": "1.0.0",
-  "description": "ExtJS Module for Virtimo BPC",
+  "description": "Service Module - Platform: Virtimo BPC",
   "main": "build.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/srcld/dataservice-extjs#readme",
   "dependencies": {
-    "@srcld/bpc-sdk-unofficial": "^0.0.15"
+    "@srcld/bpc-sdk-unofficial": "^0.0.21"
   },
   "bpcCompat": {
     "name": "dataservice",

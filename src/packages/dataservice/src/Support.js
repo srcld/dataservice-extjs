@@ -1,7 +1,10 @@
 Ext.define('dataservice.Support', {
     singleton: true,
 
+    errorText: 'Sorry, something went wrong. Please check your config values',
+
     getErrorComponentConfig: function (text) {
+        text = text || this.errorText || '';
         return {
             xtype: 'container',
             html: text
@@ -44,6 +47,19 @@ Ext.define('dataservice.Support', {
             xtype: 'panel',
             layout: 'fit'
         });
-    }
+    },
 
+    getConfig: function (moduleId) {
+        return this.getSetting(moduleId, 'clientConfiguration') || {};
+    },
+
+    configValid: function (config) {
+        const {clientId = '', feedId = '', libId = '', serviceUrl = '', path = ''} = config;
+        return [clientId, feedId, libId, serviceUrl, path].map((v) => v && v.length > 0).indexOf(false) === -1
+    },
+
+    getApiConfig: function (config) {
+        const {clientId = '', feedId = '', libId = '', serviceUrl = '', path = ''} = config;
+        return {clientId, feedId, libId, serviceUrl, path};
+    }
 });
