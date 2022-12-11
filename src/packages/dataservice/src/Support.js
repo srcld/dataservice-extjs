@@ -1,7 +1,7 @@
 Ext.define('dataservice.Support', {
     singleton: true,
 
-    errorText: 'Sorry, something went wrong. Please check your config values',
+    errorText: 'Sorry, something went wrong. Please check your config values.',
 
     getErrorComponentConfig: function (text) {
         text = text || this.errorText || '';
@@ -30,16 +30,53 @@ Ext.define('dataservice.Support', {
                 resolve(true);
                 return;
             }
-            Ext.Loader.loadScript({
-                url: serviceUrl + path + '?' + this.objectToParams({clientId, id: libId}),
-                onLoad: function () {
-                    resolve(!!window.srcld);
-                },
-                onError: function (error) {
-                    resolve(false);
+            const url = serviceUrl + path + '?' + this.objectToParams({clientId, id: libId});
+
+            fetch(url).then((response) => {
+                if (!response.ok) {
+                    let {status} = response;
+                    let errorMessage = status + ' - ';
+                    return response.json().then((body) => {
+                        let {message} = body || {};
+                        errorMessage += (message || this.errorText);
+                        return {
+                            success: response.ok,
+                            message: errorMessage
+                        }
+                    })
                 }
-            });
+                return response.blob().then((blob) => {
+                    return {
+                        success: response.ok,
+                        data: blob
+                    }
+                });
+            }).then((obj) => {
+                if (obj.success) {
+                    this.addBlobAsScript(obj.data).then(() => {
+                        resolve(!!window.srcld);
+                    });
+                } else {
+                    resolve(obj.message);
+                }
+            }).catch((e) => {
+                resolve(false);
+            })
+
         });
+    },
+
+    addBlobAsScript: function (blob) {
+        let script = document.createElement("script");
+        script.setAttribute("src", URL.createObjectURL(blob));
+        script.setAttribute("type", "text/javascript");
+        script.async = false;
+        return new Promise((resolve) => {
+            document.head.appendChild(script);
+            script.addEventListener('load', () => {
+                resolve(true);
+            })
+        })
     },
 
     panelWrapper: function () {

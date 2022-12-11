@@ -24,18 +24,18 @@ Ext.define('dataservice.Wrapper', {
             .then(this.setupDataComponent.bind(this))
     },
 
-    onLibLoaded: function (libsLoaded) {
-        if (!libsLoaded) {
-            this.add(this.supportLib.getErrorComponentConfig());
-            return false;
+    onLibLoaded: function (libsLoaded) { // TODO improve - true or text
+        if (libsLoaded !== true) {
+            this.add(this.supportLib.getErrorComponentConfig(libsLoaded));
+            return libsLoaded;
         }
         return true;
     },
 
-    setupDataComponent: function (success) {
-        if (!success) {
+    setupDataComponent: function (success) { // TODO improve - true or text
+        if (success !== true) {
             this.removeAll();
-            this.add(this.supportLib.getErrorComponentConfig());
+            this.add(this.supportLib.getErrorComponentConfig(success));
             return;
         }
 
