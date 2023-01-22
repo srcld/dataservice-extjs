@@ -1,3 +1,3 @@
-# Sourcloud DataServices - BPC Module
+# Sourcloud Dataservice - BPC Module
 
-![Status](https://github.com/srcld/dataservice-extjs/.github/workflows/node.js.yml/badge.svg)
+![Status](https://github.com/srcld/dataservice-extjs/actions/workflows/node.js.yml/badge.svg)
