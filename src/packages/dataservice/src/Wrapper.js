@@ -4,7 +4,6 @@ Ext.define('dataservice.Wrapper', {
 
     requires: ['dataservice.Support'],
 
-
     layout: 'fit',
 
     moduleId: undefined,
@@ -40,10 +39,13 @@ Ext.define('dataservice.Wrapper', {
         }
 
         const cfg = this.getComponentConfig();
-        if (cfg) this.add(cfg);
+        if(this.widget){
+            cfg.header = false;
+        }
+        if (cfg) return this.add(cfg);
     },
 
-    getComponentConfig: function () {
+    getComponentConfig: function (widget = false) {
         const {feedId, clientId} = this.dataSrvConfig || {};
 
         let components = (window.srcld || {}).sources || [];

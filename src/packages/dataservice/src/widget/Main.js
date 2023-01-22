@@ -6,6 +6,7 @@
 
 Ext.define("dataservice.widget.Main", {
     extend: "Ext.panel.Panel",
+    alias: 'widget.dataserviceWidget',
 
     mixins: ["BpcCommon.mixin.Widget"], // VERY IMPORTANT.
 
