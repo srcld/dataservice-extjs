@@ -87,7 +87,12 @@ Ext.define('dataservice.Support', {
     },
 
     getConfig: function (moduleId) {
-        return this.getSetting(moduleId, 'clientConfiguration') || {};
+        const config = this.getSetting(moduleId, 'clientConfiguration') || {};
+        const serviceUrl = this.getSetting('dataservice', 'serviceUrl') || '';
+        const clientId = this.getSetting('dataservice', 'clientId') || '';
+        if(serviceUrl.length) config.serviceUrl = serviceUrl;
+        if(clientId.length) config.clientId = clientId;
+        return config;
     },
 
     configValid: function (config) {
