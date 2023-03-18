@@ -98,6 +98,8 @@ Ext.define("dataservice.widget.Main", {
         // unsure if code changes, catch errors
         try {
             const w = this.up('dbWidgetWrapper');
+            iconCls = iconCls || '';
+            title = title || '';
             if (w && title.length) w.setTitle(title);
             if (w && iconCls.length) w.setIconCls(iconCls);
         } catch (e) {
