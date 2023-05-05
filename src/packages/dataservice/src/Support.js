@@ -24,13 +24,15 @@ Ext.define('dataservice.Support', {
     },
 
     loadScriptData: function (config) {
-        let {clientId, libId, serviceUrl, path} = config;
+        let {clientId, libId, serviceUrl, path, proxyId} = config;
         return new Promise((resolve) => {
             if (window.srcld) {
                 resolve(true);
                 return;
             }
-            const url = serviceUrl + path + '?' + this.objectToParams({clientId, id: libId});
+            if (proxyId) serviceUrl = BpcCommon.Api.getBackendUrl(proxyId);
+            let url = serviceUrl + path + '?' + this.objectToParams({clientId, id: libId});
+
 
             fetch(url).then((response) => {
                 if (!response.ok) {
@@ -90,8 +92,10 @@ Ext.define('dataservice.Support', {
         const config = this.getSetting(moduleId, 'clientConfiguration') || {};
         const serviceUrl = this.getSetting('dataservice', 'serviceUrl') || '';
         const clientId = this.getSetting('dataservice', 'clientId') || '';
-        if(serviceUrl.length) config.serviceUrl = serviceUrl;
-        if(clientId.length) config.clientId = clientId;
+        const proxyId = this.getSetting('dataservice', 'proxyId') || '';
+        if (serviceUrl.length) config.serviceUrl = serviceUrl;
+        if (clientId.length) config.clientId = clientId;
+        if (proxyId.length) config.proxyId = proxyId;
         return config;
     },
 
