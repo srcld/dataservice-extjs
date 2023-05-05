@@ -103,9 +103,10 @@ Ext.define('dataservice.Support', {
         const {clientId = '', feedId = '', libId = '', serviceUrl = '', path = ''} = config;
         return [clientId, feedId, libId, serviceUrl, path].map((v) => v && v.length > 0).indexOf(false) === -1
     },
-
+    
+    // TODO rfc
     getApiConfig: function (config) {
-        const {clientId = '', feedId = '', libId = '', serviceUrl = '', path = ''} = config;
-        return {clientId, feedId, libId, serviceUrl, path};
+        const {clientId = '', feedId = '', libId = '', serviceUrl = '', path = '', proxyId} = config;
+        return {clientId, feedId, libId, serviceUrl, path, proxyId};
     }
 });
