@@ -24,53 +24,68 @@ Ext.define('dataservice.Support', {
     },
 
     loadScriptData: function (config) {
-        let {clientId, libId, serviceUrl, path, proxyId} = config;
-        return new Promise((resolve) => {
-            if (window.srcld) {
-                resolve(true);
-                return;
-            }
-            if (proxyId) serviceUrl = BpcCommon.Api.getBackendUrl(proxyId);
-            let url = serviceUrl + path + '?' + this.objectToParams({clientId, id: libId});
+        let {clientId, libId, serviceUrl, path, proxyId, proxyUrl} = config;
+        // return new Promise((resolve) => {
+        if (window.srcld) {
+            console.debug('library found, stopping here')
+            return Promise.resolve(true);
+        }
+        // from 4.1 - default csp does not allow to load js from another site
+        // if defined, lets use proxy
+        if (proxyId) serviceUrl = proxyUrl;
+        let url = serviceUrl + path + '?' + this.objectToParams({clientId, id: libId});
 
+        // TODO rfc
+        return this.addScriptToHead(url)
+            .then(() => {
+                console.debug('library not found, adding lib..')
+                return !!window.srcld
+            });
 
-            fetch(url).then((response) => {
-                if (!response.ok) {
-                    let {status} = response;
-                    let errorMessage = status + ' - ';
-                    return response.json().then((body) => {
-                        let {message} = body || {};
-                        errorMessage += (message || this.errorText);
-                        return {
-                            success: response.ok,
-                            message: errorMessage
-                        }
-                    })
-                }
-                return response.blob().then((blob) => {
-                    return {
-                        success: response.ok,
-                        data: blob
-                    }
-                });
-            }).then((obj) => {
-                if (obj.success) {
-                    this.addBlobAsScript(obj.data).then(() => {
-                        resolve(!!window.srcld);
-                    });
-                } else {
-                    resolve(obj.message);
-                }
-            }).catch((e) => {
-                resolve(false);
-            })
+        //
+        // fetch(url)
+        //     .then((response) => {
+        //         if (!response.ok) {
+        //             let {status} = response;
+        //             let errorMessage = status + ' - ';
+        //             return response.json().then((body) => {
+        //                 let {message} = body || {};
+        //                 errorMessage += (message || this.errorText);
+        //                 return {
+        //                     success: response.ok,
+        //                     message: errorMessage
+        //                 }
+        //             })
+        //         }
+        //         if (asBlob) {
+        //             return response.blob().then((blob) => {
+        //                 return {
+        //                     success: response.ok,
+        //                     data: blob
+        //                 }
+        //             });
+        //         }
+        //         return response.text().then((text) => {
+        //             return {
+        //                 success: response.ok,
+        //                 data: text
+        //             }
+        //         });
+        //     }).then((obj) => {
+        //         if (obj.success) {
+        //
+        //         }
+        //         return obj.message;
+        //     }).catch((e) => {
+        //         return false;
+        //     })
 
-        });
+        // });
     },
 
-    addBlobAsScript: function (blob) {
+    addScriptToHead: function (url) {
         let script = document.createElement("script");
-        script.setAttribute("src", URL.createObjectURL(blob));
+        script.setAttribute("src", url);
         script.setAttribute("type", "text/javascript");
         script.async = false;
         return new Promise((resolve) => {
@@ -103,10 +118,10 @@ Ext.define('dataservice.Support', {
         const {clientId = '', feedId = '', libId = '', serviceUrl = '', path = ''} = config;
         return [clientId, feedId, libId, serviceUrl, path].map((v) => v && v.length > 0).indexOf(false) === -1
     },
-    
+
     // TODO rfc
     getApiConfig: function (config) {
         const {clientId = '', feedId = '', libId = '', serviceUrl = '', path = '', proxyId} = config;
-        return {clientId, feedId, libId, serviceUrl, path, proxyId};
+        return {clientId, feedId, libId, serviceUrl, path, proxyId, proxyUrl: BpcCommon.Api.getBackendUrl(proxyId)};
     }
 });

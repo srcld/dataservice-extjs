@@ -10,7 +10,6 @@ Ext.define("dataservice.BpcInterface", {
         moduleConfigurationComponents: [],
         moduleInstanceConfigurationComponents: [],
         defaultModuleInstanceConfigurationComponent: undefined,
-
         widgets: ['dataservice.widget.Main']
     }
 });

@@ -12,20 +12,26 @@ Ext.define('dataservice.Wrapper', {
     widget: undefined,
 
     initComponent: function () {
-        const supportLib = dataservice.Support;
-        this.supportLib = supportLib;
         this.callParent(arguments);
 
-        const config = supportLib.getConfig(this.moduleId);
-        this.dataSrvConfig = supportLib.getApiConfig(config);
-        supportLib.loadScriptData(this.dataSrvConfig)
-            .then(this.onLibLoaded.bind(this))
-            .then(this.setupDataComponent.bind(this))
+        this.loadDsComponent();
+    },
+
+    loadDsComponent: function () {
+        try {
+            const config = dataservice.Support.getConfig(this.moduleId);
+            this.dataSrvConfig = dataservice.Support.getApiConfig(config);
+            dataservice.Support.loadScriptData(this.dataSrvConfig)
+                .then(this.onLibLoaded.bind(this))
+                .then(this.setupDataComponent.bind(this));
+        } catch (e) {
+            console.debug('Error loading dataservice component');
+        }
     },
 
     onLibLoaded: function (libsLoaded) { // TODO improve - true or text
         if (libsLoaded !== true) {
-            this.add(this.supportLib.getErrorComponentConfig(libsLoaded));
+            this.add(dataservice.Support.getErrorComponentConfig(libsLoaded));
             return libsLoaded;
         }
         return true;
@@ -34,25 +40,25 @@ Ext.define('dataservice.Wrapper', {
     setupDataComponent: function (success) { // TODO improve - true or text
         if (success !== true) {
             this.removeAll();
-            this.add(this.supportLib.getErrorComponentConfig(success));
+            this.add(dataservice.Support.getErrorComponentConfig(success));
             return;
         }
 
         const cfg = this.getComponentConfig();
-        if(this.widget){
+        if (this.widget) {
             cfg.header = false;
         }
         if (cfg) return this.add(cfg);
     },
 
     getComponentConfig: function (widget = false) {
-        const {feedId, clientId} = this.dataSrvConfig || {};
+        const {feedId, clientId, proxyId, proxyUrl} = this.dataSrvConfig || {};
 
         let components = (window.srcld || {}).sources || [];
         components = components.filter((c) => {
             return c.feedId === feedId;
         });
 
-        return components.length ? components[0].getComponent({clientId}) : undefined;
+        return components.length ? components[0].getComponent({clientId, proxyUrl}) : undefined;
     }
 });

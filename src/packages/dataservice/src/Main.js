@@ -7,14 +7,21 @@ Ext.define('dataservice.view.Main', {
     layout: 'fit',
 
     dataSrvConfig: {},
+    validConfig: undefined,
 
     initComponent: function () {
         this.callParent(arguments);
+        this.prepareDataService();
+        this.launchDataService();
+    },
 
+    prepareDataService: function () {
         const config = dataservice.Support.getConfig(this.moduleId);
-        const validConfig = dataservice.Support.configValid(config);
+        this.validConfig = dataservice.Support.configValid(config);
+    },
 
-        this.add(validConfig ? {
+    launchDataService: function () {
+        this.add(this.validConfig ? {
             xtype: 'dataserviceWrapper',
             moduleId: this.moduleId
         } : dataservice.Support.getErrorComponentConfig())

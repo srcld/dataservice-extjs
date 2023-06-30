@@ -18,12 +18,12 @@
   },
   "homepage": "https://github.com/srcld/dataservice-extjs#readme",
   "dependencies": {
-    "@srcld/bpc-sdk-unofficial": "^0.1.4"
+    "@srcld/bpc-sdk-unofficial": "^0.1.7"
   },
   "bpcCompat": {
     "name": "dataservice",
     "applicationName": "SRCLD - Services",
-    "bpcVersion": "1.0.7",
+    "bpcVersion": "1.0.9",
     "bpcPropertiesFile": ""
   }
 }
