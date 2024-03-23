@@ -4,7 +4,6 @@
   "description": "Service Module - Platform: Virtimo BPC",
   "main": "build.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node build"
   },
   "repository": {
@@ -18,12 +17,12 @@
   },
   "homepage": "https://github.com/srcld/dataservice-extjs#readme",
   "dependencies": {
-    "@srcld/bpc-sdk-unofficial": "^0.1.7"
+    "@srcld/bpc-sdk-unofficial": "^0.1.8"
   },
   "bpcCompat": {
     "name": "dataservice",
     "applicationName": "SRCLD - Services",
-    "bpcVersion": "1.0.9",
+    "bpcVersion": "1.0.11",
     "bpcPropertiesFile": ""
   }
 }
