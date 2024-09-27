@@ -11,10 +11,6 @@ Ext.define('dataservice.Support', {
         }
     },
 
-    getSetting: function (moduleId, settingName) {
-        return BpcCommon.Api.getSetting(moduleId, settingName);
-    },
-
     objectToParams: function (obj = {}) {
         let params = new URLSearchParams();
         Object.keys(obj).map((key) => {
@@ -23,64 +19,41 @@ Ext.define('dataservice.Support', {
         return params.toString();
     },
 
+    libLoadError: false,
+    loading: false,
+    loaded: false,
+    loadPromise: undefined,
+
     loadScriptData: function (config) {
-        let {clientId, libId, serviceUrl, path, proxyId, proxyUrl} = config;
-        // return new Promise((resolve) => {
-        if (window.srcld) {
+        if (this.loaded) {
             console.debug('library found, stopping here')
             return Promise.resolve(true);
         }
+
+        if (this.loading) return this.loadPromise;
+        this.loading = true;
+
+        let {clientId, libId, serviceUrl, path, proxyId, proxyUrl} = config;
         // from 4.1 - default csp does not allow to load js from another site
         // if defined, lets use proxy
         if (proxyId) serviceUrl = proxyUrl;
-        let url = serviceUrl + path + '?' + this.objectToParams({clientId, id: libId});
+        let url = serviceUrl + path + '/' + libId + '-ext.js?' + this.objectToParams({clientId});
 
         // TODO rfc
-        return this.addScriptToHead(url)
-            .then(() => {
-                console.debug('library not found, adding lib..')
+        let p = this.addScriptToHead(url)
+            .then((success) => {
+                if (success !== true) {
+                    this.libLoadError = true;
+                    throw new Error('Could not load: ' + url);
+                }
+                if (window.srcld) {
+                    this.loaded = true;
+                    this.loading = false;
+                }
                 return !!window.srcld
             });
-
-        //
-        // fetch(url)
-        //     .then((response) => {
-        //         if (!response.ok) {
-        //             let {status} = response;
-        //             let errorMessage = status + ' - ';
-        //             return response.json().then((body) => {
-        //                 let {message} = body || {};
-        //                 errorMessage += (message || this.errorText);
-        //                 return {
-        //                     success: response.ok,
-        //                     message: errorMessage
-        //                 }
-        //             })
-        //         }
-        //         if (asBlob) {
-        //             return response.blob().then((blob) => {
-        //                 return {
-        //                     success: response.ok,
-        //                     data: blob
-        //                 }
-        //             });
-        //         }
-        //         return response.text().then((text) => {
-        //             return {
-        //                 success: response.ok,
-        //                 data: text
-        //             }
-        //         });
-        //     }).then((obj) => {
-        //         if (obj.success) {
-        //
-        //         }
-        //         return obj.message;
-        //     }).catch((e) => {
-        //         return false;
-        //     })
-
-        // });
+        this.loadPromise = p;
+        return p;
     },
 
     addScriptToHead: function (url) {
@@ -93,24 +66,22 @@ Ext.define('dataservice.Support', {
             script.addEventListener('load', () => {
                 resolve(true);
             })
+            script.addEventListener('error', (e) => {
+                resolve(e);
+            })
         })
     },
 
-    panelWrapper: function () {
-        return Ext.create({
-            xtype: 'panel',
-            layout: 'fit'
-        });
-    },
-
     getConfig: function (moduleId) {
-        const config = this.getSetting(moduleId, 'clientConfiguration') || {};
-        const serviceUrl = this.getSetting('dataservice', 'serviceUrl') || '';
-        const clientId = this.getSetting('dataservice', 'clientId') || '';
-        const proxyId = this.getSetting('dataservice', 'proxyId') || '';
+        const libBpc = dataservice.Bpc;
+        const config = libBpc.getSetting(moduleId, 'clientConfiguration') || {};
+        const serviceUrl = libBpc.getSetting('dataservice', 'serviceUrl') || '';
+        const clientId = libBpc.getSetting('dataservice', 'clientId') || '';
+        const proxyId = libBpc.getSetting('dataservice', 'proxyId') || '';
         if (serviceUrl.length) config.serviceUrl = serviceUrl;
         if (clientId.length) config.clientId = clientId;
         if (proxyId.length) config.proxyId = proxyId;
+        console.debug('config used: ', config);
         return config;
     },
 

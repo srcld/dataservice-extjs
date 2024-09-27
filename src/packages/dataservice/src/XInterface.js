@@ -7,7 +7,7 @@ Ext.define("dataservice.BpcInterface", {
     requires: ['dataservice.widget.Main'],
 
     config: {
-        moduleConfigurationComponents: [],
+        moduleConfigurationComponents: ['dataserviceConfig'],
         moduleInstanceConfigurationComponents: [],
         defaultModuleInstanceConfigurationComponent: undefined,
         widgets: ['dataservice.widget.Main']

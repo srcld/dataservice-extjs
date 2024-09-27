@@ -13,7 +13,6 @@ Ext.define('dataservice.Wrapper', {
 
     initComponent: function () {
         this.callParent(arguments);
-
         this.loadDsComponent();
     },
 
@@ -22,27 +21,18 @@ Ext.define('dataservice.Wrapper', {
             const config = dataservice.Support.getConfig(this.moduleId);
             this.dataSrvConfig = dataservice.Support.getApiConfig(config);
             dataservice.Support.loadScriptData(this.dataSrvConfig)
-                .then(this.onLibLoaded.bind(this))
-                .then(this.setupDataComponent.bind(this));
+                .then(this.setupDataComponent.bind(this))
+                .catch((e) => {
+                    this.removeAll();
+                    this.add(dataservice.Support.getErrorComponentConfig((e.message || e.msg || 'SITE LOAD ERROR') + ' PLEASE CHECK YOUR CONSOLE'));
+                });
         } catch (e) {
             console.debug('Error loading dataservice component');
         }
     },
 
-    onLibLoaded: function (libsLoaded) { // TODO improve - true or text
-        if (libsLoaded !== true) {
-            this.add(dataservice.Support.getErrorComponentConfig(libsLoaded));
-            return libsLoaded;
-        }
-        return true;
-    },
-
     setupDataComponent: function (success) { // TODO improve - true or text
-        if (success !== true) {
-            this.removeAll();
-            this.add(dataservice.Support.getErrorComponentConfig(success));
-            return;
-        }
+        if (success !== true) throw new Error('Lib not loaded.');
 
         const cfg = this.getComponentConfig();
         if (this.widget) {
@@ -51,14 +41,18 @@ Ext.define('dataservice.Wrapper', {
         if (cfg) return this.add(cfg);
     },
 
-    getComponentConfig: function (widget = false) {
+    getComponentConfig: function () {
         const {feedId, clientId, proxyId, proxyUrl} = this.dataSrvConfig || {};
+        let feedConfig = this.getFeedConfig(feedId);
+        // remove calls to this method - should be 1 instead of 3
+        let config = dataservice.Support.getConfig(this.moduleId);
+        return feedConfig ? feedConfig.getComponent({clientId, proxyUrl, serviceConfig: config}) : undefined;
+    },
 
-        let components = (window.srcld || {}).sources || [];
-        components = components.filter((c) => {
+    getFeedConfig: function (feedId) {
+        let [feedConfig] = ((window.srcld || {}).sources || []).filter((c) => {
             return c.feedId === feedId;
         });
-
-        return components.length ? components[0].getComponent({clientId, proxyUrl}) : undefined;
+        return feedConfig;
     }
 });
