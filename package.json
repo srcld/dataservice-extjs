@@ -22,7 +22,7 @@
   "bpcCompat": {
     "name": "dataservice",
     "applicationName": "SRCLD - Services",
-    "bpcVersion": "1.0.12",
+    "bpcVersion": "1.0.13",
     "bpcPropertiesFile": ""
   }
 }
