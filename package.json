@@ -1,6 +1,6 @@
 {
   "name": "@srcld/dataservice-extjs",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Service Module - Platform: Virtimo BPC",
   "main": "build.js",
   "scripts": {
