@@ -13,5 +13,10 @@ module.exports = [
         key: 'clientId',
         value: '',
         type: 'text'
+    },
+    {
+        key: 'config',
+        value: {},
+        type: 'json'
     }
 ]

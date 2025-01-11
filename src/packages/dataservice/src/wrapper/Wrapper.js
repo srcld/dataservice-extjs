@@ -33,7 +33,6 @@ Ext.define('dataservice.Wrapper', {
 
     setupDataComponent: function (success) { // TODO improve - true or text
         if (success !== true) throw new Error('Lib not loaded.');
-
         const cfg = this.getComponentConfig();
         if (this.widget) {
             cfg.header = false;
@@ -42,11 +41,15 @@ Ext.define('dataservice.Wrapper', {
     },
 
     getComponentConfig: function () {
-        const {feedId, clientId, proxyId, proxyUrl} = this.dataSrvConfig || {};
+        const {feedId, clientId, proxyUrl} = this.dataSrvConfig || {};
         let feedConfig = this.getFeedConfig(feedId);
         // remove calls to this method - should be 1 instead of 3
-        let config = dataservice.Support.getConfig(this.moduleId);
-        return feedConfig ? feedConfig.getComponent({clientId, proxyUrl, serviceConfig: config}) : undefined;
+        return feedConfig ? feedConfig.getComponent({
+            clientId,
+            proxyUrl,
+            serviceConfig: dataservice.Support.getConfig(this.moduleId),
+            siteConfig: dataservice.Support.siteConfig()
+        }) : undefined;
     },
 
     getFeedConfig: function (feedId) {

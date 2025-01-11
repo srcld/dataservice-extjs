@@ -11,19 +11,6 @@ Ext.define('dataservice.view.Main', {
 
     initComponent: function () {
         this.callParent(arguments);
-        this.prepareDataService();
-        this.launchDataService();
-    },
-
-    prepareDataService: function () {
-        const config = dataservice.Support.getConfig(this.moduleId);
-        this.validConfig = dataservice.Support.configValid(config);
-    },
-
-    launchDataService: function () {
-        this.add(this.validConfig ? {
-            xtype: 'dataserviceWrapper',
-            moduleId: this.moduleId
-        } : dataservice.Support.getErrorComponentConfig())
+        this.add(dataservice.Support.getServiceWrapperComponent(this.moduleId))
     }
 });

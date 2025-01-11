@@ -17,12 +17,14 @@ Ext.define("dataservice.widget.Main", {
     },
 
     widgetConfigSettingMap: {
-        moduleId: {settingType: "moduleInstance"}
+        moduleId: {settingType: "moduleInstance"},
+        config: {settingType: 'json'}
     },
 
     config: {
         widgetConfiguration: {
-            moduleId: undefined
+            moduleId: undefined,
+            config: {}
         }
     },
 
@@ -37,7 +39,6 @@ Ext.define("dataservice.widget.Main", {
         } catch (e) {
             // TODO errorPanel
         }
-        this.lib = dataservice.Support;
         this.callParent(arguments);
         this.initWidget();
         this.settingPanel = this.add({
@@ -69,29 +70,19 @@ Ext.define("dataservice.widget.Main", {
             load: Ext.emptyFn()
         })
 
-        const config = this.lib.getConfig(this.moduleId);
-        const validConfig = this.lib.configValid(config);
-        if (validConfig) this.onConfiguredSuccess();
-        else this.onConfiguredError()
-    },
-
-    onConfiguredSuccess: function () {
-        this.serviceCmp = this.wrapper.add({
-            xtype: 'dataserviceWrapper',
-            widget: this,
-            moduleId: this.moduleId
-        })
-    },
-
-    onConfiguredError: function () {
-        this.wrapper.add(this.lib.getErrorComponentConfig());
+        const cmp = dataservice.Support.getServiceWrapperComponent(this.moduleId);
+        this.serviceCmp = this.wrapper.add(cmp)
     },
 
     serviceCmp: undefined,
 
     refreshWidget: function () {
-        this.wrapper.load();
-        if (this.serviceCmp) this.serviceCmp.load();
+        try {
+            this.wrapper.load();
+            if (this.serviceCmp) this.serviceCmp.load();
+        } catch (e) {
+            console.log('error updating widget', e)
+        }
     },
 
     changeWidgetTitle: function (title = '', iconCls = '') {

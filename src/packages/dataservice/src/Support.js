@@ -85,6 +85,12 @@ Ext.define('dataservice.Support', {
         return config;
     },
 
+    siteConfig: function () {
+        const libBpc = dataservice.Bpc;
+        const {client} = libBpc.getSetting('dataservice', 'config') || {};
+        return client;
+    },
+
     configValid: function (config) {
         const {clientId = '', feedId = '', libId = '', serviceUrl = '', path = ''} = config;
         return [clientId, feedId, libId, serviceUrl, path].map((v) => v && v.length > 0).indexOf(false) === -1
@@ -94,5 +100,14 @@ Ext.define('dataservice.Support', {
     getApiConfig: function (config) {
         const {clientId = '', feedId = '', libId = '', serviceUrl = '', path = '', proxyId} = config;
         return {clientId, feedId, libId, serviceUrl, path, proxyId, proxyUrl: BpcCommon.Api.getBackendUrl(proxyId)};
+    },
+
+    getServiceWrapperComponent: function (moduleId) {
+        const config = dataservice.Support.getConfig(moduleId);
+        let validConfig = dataservice.Support.configValid(config);
+
+        return validConfig ? {
+            xtype: 'dataserviceWrapper', moduleId
+        } : dataservice.Support.getErrorComponentConfig()
     }
 });
